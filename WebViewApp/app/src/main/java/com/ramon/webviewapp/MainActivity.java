@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
         if(!webView.getUrl().equals("file:///android_asset/offline2.html")){
             lastURL = webView.getUrl();
         }
-
         if( !isNetworkAvailable() ) {
             webView.loadUrl("file:///android_asset/offline2.html");
         }

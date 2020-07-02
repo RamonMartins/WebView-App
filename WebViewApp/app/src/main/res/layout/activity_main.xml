@@ -29,6 +29,6 @@
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:layout_alignParentTop="true"
-        android:progressDrawable="@drawable/greenprogress" />
+        android:progressDrawable="@drawable/progress_bar" />
 
 </RelativeLayout>
