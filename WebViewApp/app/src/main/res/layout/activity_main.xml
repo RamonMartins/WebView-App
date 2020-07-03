@@ -20,15 +20,36 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <ImageView
+        android:id="@+id/bgNotConnected"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:color/background_light" />
 
     <ProgressBar
         android:id="@+id/pBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="3dp"
+        android:layout_height="4dp"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="2dp"
         android:progressDrawable="@drawable/progress_bar" />
+
+    <TextView
+        android:id="@+id/textNotConnected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/txt_not_connected"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:gravity="center_horizontal" />
 
 </RelativeLayout>

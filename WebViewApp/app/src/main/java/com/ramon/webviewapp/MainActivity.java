@@ -11,7 +11,9 @@ import android.view.KeyEvent;
 import android.webkit.WebView;
 import android.webkit.WebChromeClient;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 //import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -19,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     private SwipeRefreshLayout refreshLayout;
     private WebView webView;
     ProgressBar pBar;
+    ImageView bgNet;
+    TextView txtNet;
     String lastURL = "https://www.google.com/";
 
     @Override
@@ -29,9 +33,15 @@ public class MainActivity extends AppCompatActivity {
         refreshLayout = findViewById(R.id.swipe_refresh_layout);
         webView = findViewById(R.id.webViewLayout);
         pBar = findViewById(R.id.pBar);
+        bgNet = findViewById(R.id.bgNotConnected);
+        txtNet = findViewById(R.id.textNotConnected);
+
+        bgNet.setVisibility(ImageView.GONE);
+        txtNet.setVisibility(ImageView.GONE);
 
         webView.getSettings().setLoadsImagesAutomatically(true);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setAppCacheEnabled(true);
         webView.loadUrl("https://www.google.com/");
         webView.setWebViewClient(new MyBrowser());
         //Toast.makeText(MainActivity.this, "001", Toast.LENGTH_SHORT).show();
@@ -52,32 +62,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if(!webView.getUrl().equals("file:///android_asset/offline2.html")){
-            lastURL = webView.getUrl();
-        }
-        if( !isNetworkAvailable() ) {
-            webView.loadUrl("file:///android_asset/offline2.html");
-        }
-
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(!webView.getUrl().equals("file:///android_asset/offline2.html")){
-                    lastURL = webView.getUrl();
-                }
+                lastURL = webView.getUrl();
                 webView.loadUrl(lastURL);
 
                 webView.setWebChromeClient(new WebChromeClient() {
                     public void onProgressChanged(WebView view, int progress) {
                         if(progress < 100 && pBar.getVisibility() == ProgressBar.GONE){
                             if ( !isNetworkAvailable() ) {
-                                webView.loadUrl("file:///android_asset/offline2.html");
+                                bgNet.setVisibility(ImageView.VISIBLE);
+                                txtNet.setVisibility(ImageView.VISIBLE);
                             }
                         }
                         pBar.setProgress(progress);
                         if(progress == 100) {
+                            bgNet.setVisibility(ImageView.GONE);
+                            txtNet.setVisibility(ImageView.GONE);
                             if ( !isNetworkAvailable() ) {
-                                webView.loadUrl("file:///android_asset/offline2.html");
+                                bgNet.setVisibility(ImageView.VISIBLE);
+                                txtNet.setVisibility(ImageView.VISIBLE);
                             }
                             refreshLayout.setRefreshing(false);
                             webView.setWebViewClient(new MyBrowser());
@@ -87,6 +92,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        lastURL = webView.getUrl();
+
+        if( !isNetworkAvailable() ) {
+            bgNet.setVisibility(ImageView.VISIBLE);
+            txtNet.setVisibility(ImageView.VISIBLE);
+        }
     }
 
     public boolean isNetworkAvailable() {
@@ -105,16 +116,15 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             view.loadUrl(url);
-            if(!webView.getUrl().equals("file:///android_asset/offline2.html")){
-                lastURL = webView.getUrl();
-            }
+            lastURL = webView.getUrl();
 
             webView.setWebChromeClient(new WebChromeClient() {
                 public void onProgressChanged(WebView view, int progress) {
                     if(progress < 100 && pBar.getVisibility() == ProgressBar.GONE){
                         pBar.setVisibility(ProgressBar.VISIBLE);
                         if ( !isNetworkAvailable() ) {
-                            webView.loadUrl("file:///android_asset/offline2.html");
+                            bgNet.setVisibility(ImageView.VISIBLE);
+                            txtNet.setVisibility(ImageView.VISIBLE);
                         }
                     }
                     pBar.setProgress(progress);
@@ -123,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
-
             return true;
         }
     }
@@ -132,8 +141,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {
             webView.goBack();
+            //Procurar por WebBackForwardList remove, para remover a url da off page do historico
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
+
 }
